@@ -41,11 +41,11 @@ describe('alchemy-app routes', () => {
     
     expect(res.body).toEqual({
       message: 'User already exists',
-      status: 500
+      status: 400
     });
   });
 
-  it('logs existing user in via post route', async () => {
+  it('logs in existing user in via post route', async () => {
     // jest.setTimeout(10000);
     await UserService.createUser({
       email: 'test@email.com',
@@ -56,7 +56,7 @@ describe('alchemy-app routes', () => {
       .send({ 
         email: 'test@email.com',
         password:'fake-password' });
-    console.log('AT LOGIN TEST', res.body);
+    // console.log('AT LOGIN TEST', res.body);
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'test@email.com'
