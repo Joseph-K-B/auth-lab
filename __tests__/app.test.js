@@ -46,6 +46,23 @@ describe('alchemy-app routes', () => {
     });
   });
 
+  it('logs existing user in via post route', async () => {
+    await UserService.createUser({
+      email: 'test@email.com',
+      password: 'fake-password'
+    });
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ 
+        email: 'test@email.com',
+        password:'fake-password' });
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: 'rest@email.com'
+    });
+  });
+
   afterAll(() => {
     pool.end();
   });
