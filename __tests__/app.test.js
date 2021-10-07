@@ -24,6 +24,14 @@ describe('alchemy-app routes', () => {
     });
   });
 
+  it('checks for existing users', async () => {
+    const res = await request(app)
+      .get('/api/v1/auth');
+    expect(res.body).toEqual({
+      message: 'user already exists'
+    });
+  });
+
   afterAll(() => {
     pool.end();
   });
