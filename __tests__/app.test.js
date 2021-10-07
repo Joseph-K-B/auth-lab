@@ -2,6 +2,7 @@ const pool = require('../lib/utils/pool.js');
 const setup = require('../data/setup.js');
 const request = require('supertest');
 const app = require('../lib/app.js');
+const UserService = require('../lib/services/userService.js');
 
 
 describe('alchemy-app routes', () => {
@@ -25,10 +26,23 @@ describe('alchemy-app routes', () => {
   });
 
   it('checks for existing users', async () => {
+    await UserService.createUser({
+      email: 'test@email.com',
+      password: 'fake-password'
+    });
+
+    
     const res = await request(app)
-      .get('/api/v1/auth');
+      .post('/api/v1/auth/signup')
+      .send({
+        email: 'test@email.com',
+        password: 'fake-password'
+      });
+      // .get('/api/v1/auth/signup');
+    console.log('AT EXISTING EMAIL TEST', res.body);
     expect(res.body).toEqual({
-      message: 'user already exists'
+      message: 'User already exists',
+      status: 500
     });
   });
 
