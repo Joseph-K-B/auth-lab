@@ -76,11 +76,27 @@ describe('alchemy-app routes', () => {
         email: 'test@email.com',
         password:'password' 
       });
-    console.log(res.body);
+    // console.log(res.body);
     expect(res.body).toEqual({
       message: 'Invalid email/password',
       status: 401 }
     );
+  });
+
+  it('gets user currently logged in using cookie at /me', async () => {
+    await UserService.createUser({
+      email: 'test@email.com',
+      password: 'fake-password'
+    });
+
+    return await request(app)
+      .get('/api/v1/auth/me')
+      .then((res) => {
+        expect(res.body).toEqual({
+          email: 'test@email.com',
+          password:'password'
+        });
+      });
   });
 
   afterAll(() => {
