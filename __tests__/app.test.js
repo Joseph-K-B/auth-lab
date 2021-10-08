@@ -45,7 +45,7 @@ describe('alchemy-app routes', () => {
     });
   });
 
-  it('logs in existing user in via post route', async () => {
+  it('logs existing user in via post route', async () => {
     // jest.setTimeout(10000);
     await UserService.createUser({
       email: 'test@email.com',
