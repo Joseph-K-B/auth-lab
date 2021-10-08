@@ -93,8 +93,8 @@ describe('alchemy-app routes', () => {
       .get('/api/v1/auth/me')
       .then((res) => {
         expect(res.body).toEqual({
-          email: 'test@email.com',
-          password:'password'
+          id: expect.any(String),
+          email: 'test@email.com',     
         });
       });
   });
