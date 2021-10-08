@@ -2,7 +2,7 @@ const pool = require('../lib/utils/pool.js');
 const setup = require('../data/setup.js');
 const request = require('supertest');
 const app = require('../lib/app.js');
-const UserService = require('../lib/services/userService.js');
+const UserService = require('../lib/services/UserService.js');
 
 
 describe('alchemy-app routes', () => {
