@@ -55,12 +55,32 @@ describe('alchemy-app routes', () => {
       .post('/api/v1/auth/login')
       .send({ 
         email: 'test@email.com',
-        password:'fake-password' });
+        password:'fake-password' 
+      });
     // console.log('AT LOGIN TEST', res.body);
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'test@email.com'
     });
+  });
+
+  it('ensures login credentials exist in DB', async () => {
+    await UserService.createUser({
+      email: 'test@email.com',
+      password: 'fake-password'
+    });
+
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'test@email.com',
+        password:'password' 
+      });
+    console.log(res.body);
+    expect(res.body).toEqual({
+      message: 'Incorrect email/password',
+      status: 401 }
+    );
   });
 
   afterAll(() => {
