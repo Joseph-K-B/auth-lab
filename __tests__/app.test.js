@@ -78,7 +78,7 @@ describe('alchemy-app routes', () => {
       });
     console.log(res.body);
     expect(res.body).toEqual({
-      message: 'Incorrect email/password',
+      message: 'Invalid email/password',
       status: 401 }
     );
   });
