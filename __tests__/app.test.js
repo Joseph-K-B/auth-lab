@@ -18,18 +18,21 @@ describe('alchemy-app routes', () => {
       .post('/api/v1/auth/signup')
       .send({
         email: 'test@email.com',
-        password: 'fake-password'
+        password: 'fake-password',
+        role: 'QUEEN'
       });
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'test@email.com'
+      email: 'test@email.com',
+      role: 'QUEEN'
     });
   });
 
   it('checks for existing users', async () => {
     await UserService.createUser({
       email: 'test@email.com',
-      password: 'fake-password'
+      password: 'fake-password',
+      roleTitle: 'QUEEN'
     });
  
     const res = await request(app)
@@ -104,7 +107,7 @@ describe('alchemy-app routes', () => {
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'test@email.com',
-      role: 'USER'
+      // role: 'USER'
     });
   });
 
