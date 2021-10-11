@@ -28,6 +28,8 @@ describe('alchemy-app routes', () => {
     });
   });
 
+
+
   it('checks for existing users', async () => {
     await UserService.createUser({
       email: 'test@email.com',
@@ -39,7 +41,8 @@ describe('alchemy-app routes', () => {
       .post('/api/v1/auth/signup')
       .send({
         email: 'test@email.com',
-        password: 'fake-password'
+        password: 'fake-password',
+        roleTitle: 'QUEEN'
       });
     
     expect(res.body).toEqual({
@@ -52,34 +55,39 @@ describe('alchemy-app routes', () => {
     // jest.setTimeout(10000);
     await UserService.createUser({
       email: 'test@email.com',
-      password: 'fake-password'
+      password: 'fake-password',
+      roleTitle: 'QUEEN'
     });
     const res = await request(app)
       .post('/api/v1/auth/login')
       .send({ 
         email: 'test@email.com',
-        password:'fake-password' 
+        password:'fake-password',
+        roleTitle: 'QUEEN'
       });
-    // console.log('AT LOGIN TEST', res.body);
+    console.log('AT LOGIN TEST', res.body);
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'test@email.com'
+      email: 'test@email.com',
+      role: 'QUEEN'
     });
   });
 
   it('ensures login credentials exist in DB', async () => {
     await UserService.createUser({
       email: 'test@email.com',
-      password: 'fake-password'
+      password: 'fake-password',
+      role: 'PAWN'
     });
 
     const res = await request(app)
       .post('/api/v1/auth/login')
       .send({
         email: 'test@email.com',
-        password:'password' 
+        password:'password',
+        role: 'PAWN' 
       });
-    // console.log(res.body);
+    console.log('AT 401 TEST', res.body);
     expect(res.body).toEqual({
       message: 'Invalid email/password',
       status: 401 }
@@ -98,7 +106,8 @@ describe('alchemy-app routes', () => {
       .post('/api/v1/auth/login')
       .send({
         email: 'test@email.com',
-        password:'fake-password' 
+        password:'fake-password',
+        role: 'USER'
       });
 
     const res = await agent
@@ -107,7 +116,7 @@ describe('alchemy-app routes', () => {
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'test@email.com',
-      // role: 'USER'
+      role: 'USER'
     });
   });
 
