@@ -3,6 +3,7 @@ const setup = require('../data/setup.js');
 const request = require('supertest');
 const app = require('../lib/app.js');
 const UserService = require('../lib/services/UserService.js');
+// const { agent } = require('superagent');
 
 
 describe('alchemy-app routes', () => {
@@ -30,8 +31,7 @@ describe('alchemy-app routes', () => {
       email: 'test@email.com',
       password: 'fake-password'
     });
-
-    
+ 
     const res = await request(app)
       .post('/api/v1/auth/signup')
       .send({
@@ -83,21 +83,29 @@ describe('alchemy-app routes', () => {
     );
   });
 
-  // it('gets user currently logged in using cookie at /me', async () => {
-  //   await UserService.createUser({
-  //     email: 'test@email.com',
-  //     password: 'fake-password'
-  //   });
+  it('gets user currently logged in using cookie at /me', async () => {
+    await UserService.createUser({
+      email: 'test@email.com',
+      password: 'fake-password'
+    });
 
-  //   return await request(app)
-  //     .get('/api/v1/auth/me')
-  //     .then((res) => {
-  //       expect(res.body).toEqual({
-  //         id: expect.any(String),
-  //         email: 'test@email.com',     
-  //       });
-  //     });
-  // });
+    const agent = await request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'test@email.com',
+        password:'fake-password' 
+      });
+
+    const res = await agent
+      .get('/api/v1/auth/me');
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: 'test@email.com',
+    });
+  });
 
   afterAll(() => {
     pool.end();
