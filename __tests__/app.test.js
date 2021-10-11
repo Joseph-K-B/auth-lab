@@ -77,7 +77,7 @@ describe('alchemy-app routes', () => {
     await UserService.createUser({
       email: 'test@email.com',
       password: 'fake-password',
-      role: 'PAWN'
+      roleTitle: 'PAWN'
     });
 
     const res = await request(app)
@@ -85,7 +85,7 @@ describe('alchemy-app routes', () => {
       .send({
         email: 'test@email.com',
         password:'password',
-        role: 'PAWN' 
+        roleTitle: 'PAWN' 
       });
     console.log('AT 401 TEST', res.body);
     expect(res.body).toEqual({
@@ -97,7 +97,8 @@ describe('alchemy-app routes', () => {
   it('gets user currently logged in using cookie at /me', async () => {
     await UserService.createUser({
       email: 'test@email.com',
-      password: 'fake-password'
+      password: 'fake-password',
+      roleTitle: 'PAWN'
     });
 
     const agent = await request.agent(app);
@@ -107,7 +108,7 @@ describe('alchemy-app routes', () => {
       .send({
         email: 'test@email.com',
         password:'fake-password',
-        role: 'USER'
+        roleTitle: 'PAWN'
       });
 
     const res = await agent
@@ -115,8 +116,10 @@ describe('alchemy-app routes', () => {
 
     expect(res.body).toEqual({
       id: expect.any(String),
+      exp: expect.any(Number),
+      iat: expect.any(Number),
       email: 'test@email.com',
-      role: 'USER'
+      role: 'PAWN'
     });
   });
 
