@@ -104,6 +104,7 @@ describe('alchemy-app routes', () => {
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'test@email.com',
+      role: 'USER'
     });
   });
 
