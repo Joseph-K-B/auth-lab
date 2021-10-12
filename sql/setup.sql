@@ -17,7 +17,7 @@ CREATE TABLE users (
 
 
 INSERT INTO roles (title)
-VALUES ('QUEEN'), ('PAWN');
+VALUES ('QUEEN'), ('BISHOP'), ('KNIGHT'), ('ROOK'), ('PAWN');
 
 INSERT INTO users (email, password_hash, role_id)
 VALUES ('izzie@dog.com', 'does-this-work?', '1')

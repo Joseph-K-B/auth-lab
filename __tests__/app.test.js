@@ -123,6 +123,38 @@ describe('alchemy-app routes', () => {
     });
   });
 
+  it('allows queen to update users roles if authorized after authentication', async () => {
+    await UserService.createUser({
+      email: 'test@email.com',
+      password: 'fake-password',
+      roleTitle: 'PAWN'
+    });
+
+    const agent = await request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'test@email.com',
+        password:'fake-password',
+        roleTitle: 'PAWN' })
+      .patch('/api/v1/auth/1')
+      .send({
+        email: 'test@email.com',
+        password: 'fake-password',
+        roleTitle: 'ROOK'
+      })
+      .then((res) => {
+        expect(res.body).toEqual(
+          {
+            id: '2',
+            email: 'test@email.com',
+            password: 'fake-password',
+            roleTitle: 'ROOK'
+          }
+        );
+      });
+  });
+
   afterAll(() => {
     pool.end();
   });
