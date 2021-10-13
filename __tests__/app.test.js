@@ -126,7 +126,7 @@ describe('alchemy-app routes', () => {
     });
   });
 
-  it('allows queen to update users roles if authorized after authentication', async () => {
+  it('allows ADMIN to update users roles if authorized after authentication', async () => {
     await UserService.createUser({
       email: 'test@email.com',
       password: 'fake-password',
@@ -139,25 +139,25 @@ describe('alchemy-app routes', () => {
       .send({
         email: 'test@email.com',
         password:'fake-password',
-        roleTitle: 'ADMIN' })
-    const adminPatch = await request.agent(app);
-    await adminPatch
+        roleTitle: 'ADMIN' });
+    // const adminPatch = await request.agent(app);
+    await agent
       .patch('/api/v1/auth/1')
       .send({
         email: 'test@email.com',
         password: 'fake-password',
-        roleTitle: 'ROOK'
-      })
-      .then((res) => {
-        expect(res.body).toEqual(
-          {
-            id: '2',
-            email: 'test@email.com',
-            password: 'fake-password',
-            role: 'ROOK'
-          }
-        );
+        roleTitle: 'HR'
       });
+    await ((res) => {
+      console.log('RES BODY AT PATCH TEST/ LOGIN ONLY', res.body);
+      expect(res.body).toEqual(
+        {
+          id: '2',
+          email: 'test@email.com',
+          role: 'HR'
+        }
+      );
+    });
   });
 
   afterAll(() => {
