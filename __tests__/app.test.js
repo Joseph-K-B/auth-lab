@@ -3,7 +3,10 @@ const setup = require('../data/setup.js');
 const request = require('supertest');
 const app = require('../lib/app.js');
 const UserService = require('../lib/services/UserService.js');
+const { agent } = require('superagent');
 // const { agent } = require('superagent');
+
+
 
 
 describe('alchemy-app routes', () => {
@@ -19,12 +22,12 @@ describe('alchemy-app routes', () => {
       .send({
         email: 'test@email.com',
         password: 'fake-password',
-        role: 'QUEEN'
+        role: 'ADMIN'
       });
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'test@email.com',
-      role: 'QUEEN'
+      role: 'ADMIN'
     });
   });
 
@@ -34,7 +37,7 @@ describe('alchemy-app routes', () => {
     await UserService.createUser({
       email: 'test@email.com',
       password: 'fake-password',
-      roleTitle: 'QUEEN'
+      roleTitle: 'ADMIN'
     });
  
     const res = await request(app)
@@ -42,7 +45,7 @@ describe('alchemy-app routes', () => {
       .send({
         email: 'test@email.com',
         password: 'fake-password',
-        roleTitle: 'QUEEN'
+        roleTitle: 'ADMIN'
       });
     
     expect(res.body).toEqual({
@@ -56,20 +59,20 @@ describe('alchemy-app routes', () => {
     await UserService.createUser({
       email: 'test@email.com',
       password: 'fake-password',
-      roleTitle: 'QUEEN'
+      roleTitle: 'FINANCE'
     });
     const res = await request(app)
       .post('/api/v1/auth/login')
       .send({ 
         email: 'test@email.com',
         password:'fake-password',
-        roleTitle: 'QUEEN'
+        roleTitle: 'FINANCE'
       });
     console.log('AT LOGIN TEST', res.body);
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'test@email.com',
-      role: 'QUEEN'
+      role: 'FINANCE'
     });
   });
 
@@ -77,7 +80,7 @@ describe('alchemy-app routes', () => {
     await UserService.createUser({
       email: 'test@email.com',
       password: 'fake-password',
-      roleTitle: 'PAWN'
+      roleTitle: 'IT'
     });
 
     const res = await request(app)
@@ -85,7 +88,7 @@ describe('alchemy-app routes', () => {
       .send({
         email: 'test@email.com',
         password:'password',
-        roleTitle: 'PAWN' 
+        roleTitle: 'IT' 
       });
     console.log('AT 401 TEST', res.body);
     expect(res.body).toEqual({
@@ -98,7 +101,7 @@ describe('alchemy-app routes', () => {
     await UserService.createUser({
       email: 'test@email.com',
       password: 'fake-password',
-      roleTitle: 'PAWN'
+      roleTitle: 'HR'
     });
 
     const agent = await request.agent(app);
@@ -108,7 +111,7 @@ describe('alchemy-app routes', () => {
       .send({
         email: 'test@email.com',
         password:'fake-password',
-        roleTitle: 'PAWN'
+        roleTitle: 'HR'
       });
 
     const res = await agent
@@ -119,41 +122,43 @@ describe('alchemy-app routes', () => {
       exp: expect.any(Number),
       iat: expect.any(Number),
       email: 'test@email.com',
-      role: 'PAWN'
+      role: 'HR'
     });
   });
 
-  // it('allows queen to update users roles if authorized after authentication', async () => {
-  //   await UserService.createUser({
-  //     email: 'test@email.com',
-  //     password: 'fake-password',
-  //     roleTitle: 'PAWN'
-  //   });
+  it('allows queen to update users roles if authorized after authentication', async () => {
+    await UserService.createUser({
+      email: 'test@email.com',
+      password: 'fake-password',
+      roleTitle: 'ADMIN'
+    });
 
-  //   const agent = await request.agent(app);
-  //   await agent
-  //     .post('/api/v1/auth/login')
-  //     .send({
-  //       email: 'test@email.com',
-  //       password:'fake-password',
-  //       roleTitle: 'PAWN' })
-  //     .patch('/api/v1/auth/1')
-  //     .send({
-  //       email: 'test@email.com',
-  //       password: 'fake-password',
-  //       roleTitle: 'ROOK'
-  //     })
-  //     .then((res) => {
-  //       expect(res.body).toEqual(
-  //         {
-  //           id: '2',
-  //           email: 'test@email.com',
-  //           password: 'fake-password',
-  //           role: 'ROOK'
-  //         }
-  //       );
-  //     });
-  // });
+    const agent = await request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'test@email.com',
+        password:'fake-password',
+        roleTitle: 'ADMIN' })
+    const adminPatch = await request.agent(app);
+    await adminPatch
+      .patch('/api/v1/auth/1')
+      .send({
+        email: 'test@email.com',
+        password: 'fake-password',
+        roleTitle: 'ROOK'
+      })
+      .then((res) => {
+        expect(res.body).toEqual(
+          {
+            id: '2',
+            email: 'test@email.com',
+            password: 'fake-password',
+            role: 'ROOK'
+          }
+        );
+      });
+  });
 
   afterAll(() => {
     pool.end();
